@@ -5,10 +5,17 @@ from rclpy.node import Node
 from custom_msg_srv.msg import MapExplored
 
 # for control of casualty_location node
-from custom_msg_srv.srv import StartCasualtyLocation
+from custom_msg_srv.srv import StartCasualtyService
 
 # for updating when all casualties found
 from custom_msg_srv.msg import CasualtyLocateStatus
+
+# for updating when all casualties saved
+from custom_msg_srv.msg import CasualtySaveStatus
+
+
+RESET = "\033[0m"
+GREEN = "\033[92m"
 
 
 class MissionControl(Node):
@@ -17,7 +24,7 @@ class MissionControl(Node):
         self.get_logger().info("Mission Control Node Started")
 
         # service to set casualty_locate or casualty_save to start
-        self.exploration_service = self.create_client(StartCasualtyLocation, 'casualty_state')
+        self.exploration_service = self.create_client(StartCasualtyService, 'casualty_state')
         self.set_casualty_service("STOPPED")
 
         # topic to tell when nav2_wfd explorer exploration complete
@@ -39,15 +46,21 @@ class MissionControl(Node):
 
 
         # timer to run the FSM
-        self.create_timer(1.0, self.run_fsm())
+        self.create_timer(1.0, self.run_fsm)
 
 
     def set_casualty_service(self, state):
-        self.req = StartExploration.Request()
-        self.req.state = state
-        while not self.exploration_service.wait_for_service(timeout_sec=5.0):
-            self.get_logger().warning('explorer not avail, waiting...')
-        self.exploration_service.call_async(self.req)
+        req = StartCasualtyService.Request()
+        req.state = state
+
+        if not self.exploration_service.service_is_ready():
+            self.get_logger().warning('Explorer service not available. Retrying...')
+            self.exploration_service.wait_for_service(timeout_sec=5.0)
+
+        if self.exploration_service.service_is_ready():
+            self.exploration_service.call_async(self.req)
+        else:
+            self.get_logger().error('Explorer service unavailable after timeout.')
 
     def exploration_callback(self, msg):
         self.mapExplored = msg.explore_complete
@@ -65,10 +78,12 @@ class MissionControl(Node):
 
 
         if self.state == 'explore':
-            self.prevState = self.state
+            if self.prevState != 'explore':
+                self.get_logger().info(f"{GREEN}exploring map...{RESET}")
+                self.prevState = self.state
             # wait for exploration to finish
             if self.mapExplored:
-                self.get_logger().info("exploration complete")
+                self.get_logger().info(f"{GREEN}exploration complete{RESET}")
                 self.state = 'locate casualty'
 
 
@@ -80,7 +95,7 @@ class MissionControl(Node):
                 self.prevState = self.state
 
             if self.casualties_found:
-                self.get_logger().info("all casualties found")
+                self.get_logger().info(f"{GREEN}all casualties found{RESET}")
                 self.state = 'save casualty'
 
 
@@ -88,6 +103,7 @@ class MissionControl(Node):
         elif self.state == 'save casualty':
             # ensure service only called once
             if self.prevState != 'save casualty':
+                self.get_logger().info(f"{GREEN}all casualties found{RESET}")
                 self.set_casualty_service("SAVE")
                 self.prevState = self.state
 
@@ -99,7 +115,7 @@ class MissionControl(Node):
 
         elif self.state == 'mission complete':
             if self.prevState != 'mission complete':
-                self.get_logger().info("Mission Completed")
+                self.get_logger().info(f"{GREEN}Mission Completed{RESET}")
                 self.prevState = self.state
                 # stop the mission control node 
 
