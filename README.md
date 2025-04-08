@@ -10,7 +10,7 @@ This node handles the Finite State Machine (FSM) flow of events during our missi
 ### Run on Remote PC
 1. (if running on simulation) Turtlebot3 Gazebo launch
   ```bash
-  ros2 launch mission_control turtlebot3_world.launch.py world:=/home/izen/custom_models/test2/model.sdf
+  ros2 launch mission_control turtlebot3_world.launch.py
   ```
 
 2. nav2 Stack
@@ -26,7 +26,7 @@ Parameters for the Nav2 stack can be found in mission_control/config/nav2_params
 
 4. (if you need to debug) RViz
  ```bash
- ros2 launch mission_control rviz.launch.py rviz_config:=/home/izen/2310_workspace/src/autonomous-explorer-node/rviz_config/frontier_view.rviz
+ ros2 launch mission_control rviz.launch.py 
  ```
 
 5. Finally, run the missionStart launch file
