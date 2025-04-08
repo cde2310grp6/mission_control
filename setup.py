@@ -15,6 +15,8 @@ setup(
 
         # ensure launch files are found under custom_explorer package
         (os.path.join('share', package_name, 'launch_file'), glob('launch_file/*.launch.py')),
+        # ensure config files are found under custom_explorer package
+        (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
