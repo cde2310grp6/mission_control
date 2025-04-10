@@ -185,10 +185,10 @@ controller_server:
       GoalAlign.forward_point_distance: 0.1
       PathDist.scale: 32.0
       GoalDist.scale: 24.0
-      RotateToGoal.enabled: false
+      RotateToGoal.enabled: True
       #RotateToGoal.scale: 32.0
-      RotateToGoal.scale: 12.0
-      RotateToGoal.slowing_factor: 5.0
+      RotateToGoal.scale: 1.0
+      RotateToGoal.slowing_factor: 0.0
       RotateToGoal.lookahead_time: -1.0
 
 local_costmap:

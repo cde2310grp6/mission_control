@@ -58,7 +58,7 @@ class MissionControl(Node):
             self.exploration_service.wait_for_service(timeout_sec=5.0)
 
         if self.exploration_service.service_is_ready():
-            self.exploration_service.call_async(self.req)
+            self.exploration_service.call_async(req)
         else:
             self.get_logger().error('Explorer service unavailable after timeout.')
 
@@ -70,7 +70,6 @@ class MissionControl(Node):
 
     def casualty_save_callback(self, msg):
         self.casualties_saved = msg.all_casualties_saved
-
 
 
     # FSM: finite state machine

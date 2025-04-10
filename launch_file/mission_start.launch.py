@@ -11,6 +11,9 @@ def generate_launch_description():
         # casualty locator
         Node(package="casualty_location", executable="casualty_location", name="casualty_explorer"),
 
+        # casualty saver
+        Node(package="casualty_location", executable="casualty_saver", name="casualty_saver"),
+
         # frontier exploration node
         Node(package="nav2_wfd", executable="explore", name="frontier_explorer"),
     ]
