@@ -164,7 +164,7 @@ controller_server:
       vx_samples: 20
       vy_samples: 5
       vtheta_samples: 20
-      sim_time: 0.75
+      sim_time: 2.0
       linear_granularity: 0.05
       angular_granularity: 0.025
       transform_tolerance: 0.2
@@ -185,10 +185,10 @@ controller_server:
       GoalAlign.forward_point_distance: 0.1
       PathDist.scale: 32.0
       GoalDist.scale: 24.0
-      RotateToGoal.enabled: True
+      RotateToGoal.enabled: False
       #RotateToGoal.scale: 32.0
-      RotateToGoal.scale: 1.0
-      RotateToGoal.slowing_factor: 0.0
+      RotateToGoal.scale: 12.0
+      RotateToGoal.slowing_factor: 1.0
       RotateToGoal.lookahead_time: -1.0
 
 local_costmap:
@@ -210,7 +210,7 @@ local_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         #cost_scaling_factor: 3.0
-        cost_scaling_factor: 3.0
+        cost_scaling_factor: 2.0
         #inflation_radius: 0.3
         inflation_radius: 0.3
       voxel_layer:
