@@ -26,7 +26,7 @@ Parameters for the Nav2 stack can be found in mission_control/config/nav2_params
 
 4. (if you need to debug) RViz
  ```bash
- ros2 launch mission_control rviz.launch.py rviz_config:=./src/mission_control/config/rviz_marker_view.rviz
+ ros2 launch mission_control rviz.launch.py 
  ```
 
 5. Finally, run the missionStart launch file
