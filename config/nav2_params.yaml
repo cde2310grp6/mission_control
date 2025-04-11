@@ -125,9 +125,10 @@ controller_server:
 
     # Progress checker parameters
     progress_checker:
-      plugin: "nav2_controller::SimpleProgressChecker"
+      plugin: "nav2_controller::PoseProgressChecker"
       required_movement_radius: 0.5
-      movement_time_allowance: 10.0
+      required_movement_angle: 0.3
+      movement_time_allowance: 5.0
     # Goal checker parameters
     #precise_goal_checker:
     #  plugin: "nav2_controller::SimpleGoalChecker"
@@ -138,12 +139,20 @@ controller_server:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
      # xy_goal_tolerance: 0.25
-      xy_goal_tolerance: 0.3
+      xy_goal_tolerance: 0.4
      # yaw_goal_tolerance: 0.25
-      yaw_goal_tolerance: 1.6
+      yaw_goal_tolerance: 0.4
     # DWB parameters
     FollowPath:
-      plugin: "dwb_core::DWBLocalPlanner"
+      plugin: "nav2_rotation_shim_controller::RotationShimController"
+      primary_controller: "dwb_core::DWBLocalPlanner"
+      angular_dist_threshold: 0.3925
+      forward_sampling_distance: 0.3
+      angular_disengage_threshold: 0.3925
+      rotate_to_heading_angular_vel: 1.8
+      max_angular_accel: 3.2
+      simulate_ahead_time: 1.5
+      rotate_to_goal_heading: true
       debug_trajectory_details: True
       min_vel_x: 0.0
       min_vel_y: 0.0
@@ -165,30 +174,30 @@ controller_server:
       vx_samples: 20
       vy_samples: 5
       vtheta_samples: 20
-      sim_time: 1.4
+      sim_time: 1.2
       linear_granularity: 0.05
       angular_granularity: 0.025
       transform_tolerance: 0.2
       #xy_goal_tolerance: 0.25
-      xy_goal_tolerance: 0.3
+      xy_goal_tolerance: 0.4
       #trans_stopped_velocity: 0.25
       trans_stopped_velocity: 0.05
       short_circuit_trajectory_evaluation: True
       stateful: True
       critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
-      BaseObstacle.scale: 0.05
+      BaseObstacle.scale: 0.04
       #PathAlign.scale: 32.0
-      PathAlign.scale: 38.0
-      PathAlign.forward_point_distance: 0.325
+      PathAlign.scale: 48.0
+      PathAlign.forward_point_distance: 0.15
       #GoalAlign.scale: 24.0
       GoalAlign.enabled: false
       GoalAlign.scale: 10.0
       GoalAlign.forward_point_distance: 0.1
       PathDist.scale: 24.0
       GoalDist.scale: 12.0
-      RotateToGoal.enabled: True
+      RotateToGoal.enabled: true
       #RotateToGoal.scale: 32.0
-      RotateToGoal.scale: 20.0
+      RotateToGoal.scale: 12.0
       RotateToGoal.slowing_factor: 5.0
       RotateToGoal.lookahead_time: -1.0
       Oscillation.oscillation_reset_angle: 0.6
@@ -206,16 +215,16 @@ local_costmap:
       width: 3
       height: 3
       resolution: 0.05
-      robot_radius: 0.14
-      #footprint: "[[-0.089, -0.140], [0.134, -0.140], [0.134, 0.145], [-0.089, 0.145]]"
-      #footprint_padding: 0.05
+      #robot_radius: 0.16
+      footprint: "[[-0.140, -0.134], [-0.140, 0.089], [0.145, 0.089], [0.145, -0.134]]"
+      footprint_padding: 0.05
       plugins: ["voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         #cost_scaling_factor: 3.0
-        cost_scaling_factor: 3.0
+        cost_scaling_factor: 5.0
         #inflation_radius: 0.3
-        inflation_radius: 0.3
+        inflation_radius: 0.8
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -249,9 +258,9 @@ global_costmap:
       global_frame: map
       robot_base_frame: base_link
       use_sim_time: False
-      robot_radius: 0.14
-      #footprint: "[[-0.089, -0.140], [0.134, -0.140], [0.134, 0.145], [-0.089, 0.145]]"
-      #footprint_padding: 0.05
+      #robot_radius: 0.16
+      footprint: "[[-0.140, -0.134], [-0.140, 0.089], [0.145, 0.089], [0.145, -0.134]]"
+      footprint_padding: 0.05
       resolution: 0.05
       track_unknown_space: true
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
@@ -275,9 +284,9 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         #cost_scaling_factor: 3.0
-        cost_scaling_factor: 3.0
+        cost_scaling_factor: 5.0
         #inflation_radius: 0.3
-        inflation_radius: 0.3
+        inflation_radius: 0.5
       always_send_full_costmap: True
 
 map_server:
@@ -294,18 +303,19 @@ map_saver:
     free_thresh_default: 0.25
     occupied_thresh_default: 0.65
     map_subscribe_transient_local: True
-
+    
 planner_server:
   ros__parameters:
-    expected_planner_frequency: 20.0
-    use_sim_time: False
-    planner_plugins: ["GridBased"]
+    planner_plugin_types: ["nav2_theta_star_planner/ThetaStarPlanner"]
+    use_sim_time: True
+    planner_plugin_ids: ["GridBased"]
     GridBased:
-      plugin: "nav2_navfn_planner/NavfnPlanner"
-      tolerance: 0.1
-      use_astar: false
+      how_many_corners: 8
+      w_euc_cost: 1.0
+      w_traversal_cost: 2.0
+
+      use_final_approach_orientation: true
       allow_unknown: true
-      use_final_approach_orientation: false
 
 smoother_server:
   ros__parameters:
