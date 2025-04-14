@@ -21,17 +21,17 @@ Parameters for the Nav2 stack can be found in mission_control/config/nav2_params
 
 3. slam_toolbox online_async
  ```bash
- ros2 launch mission_control online_async.launch.py
+ ros2 launch mission_control online_async.launch.py use_sim_time:=True
  ```
 
 4. (if you need to debug) RViz
  ```bash
- ros2 launch mission_control rviz.launch.py rviz_config:=./src/mission_control/config/rviz_marker_view.rviz
+ ros2 launch mission_control rviz.launch.py 
  ```
 
 5. Finally, run the missionStart launch file
 ```bash
-ros2 launch mission_control mission_start.launch.py
+ros2 launch mission_control mission_start.launch.py use_sim_time:=True
 ```
 
 ### Run on SBC
