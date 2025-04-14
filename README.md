@@ -9,25 +9,25 @@ This node handles the Finite State Machine (FSM) flow of events during our missi
 
 ### Run on Remote PC
 1. (if running on simulation) Turtlebot3 Gazebo launch
-  ```bash
-  ros2 launch mission_control turtlebot3_world.launch.py
-  ```
+```bash
+ros2 launch mission_control turtlebot3_world.launch.py
+```
 
 2. nav2 Stack
- ```bash
-  ros2 launch mission_control navigation.launch.py use_sim_time:=True
-  ```
+```bash
+ros2 launch mission_control navigation.launch.py use_sim_time:=True
+```
 Parameters for the Nav2 stack can be found in mission_control/config/nav2_params.yaml
 
 3. slam_toolbox online_async
- ```bash
- ros2 launch mission_control online_async.launch.py use_sim_time:=True
- ```
+```bash
+ros2 launch mission_control online_async.launch.py use_sim_time:=True
+```
 
 4. (if you need to debug) RViz
- ```bash
- ros2 launch mission_control rviz.launch.py 
- ```
+```bash
+ros2 launch mission_control rviz.launch.py 
+```
 
 5. Finally, run the missionStart launch file
 ```bash
