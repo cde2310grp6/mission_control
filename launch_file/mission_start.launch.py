@@ -35,6 +35,12 @@ def generate_launch_description():
             executable="explore",
             name="frontier_explorer",
         ),
+
+        Node(
+            package="aligner_node",
+            executable="aligner",
+            name="aligner_node",
+        )
     ]
 
     return LaunchDescription(ld)
